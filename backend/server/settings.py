@@ -74,7 +74,7 @@ MAX_PRESIGN_BATCH = 200
 
 # Static player assets (hls.min.js). nginx serves STATIC_ROOT in production.
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.getenv("STATIC_ROOT") or BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 ############################ Django ############################
