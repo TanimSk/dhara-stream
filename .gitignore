@@ -1,0 +1,13 @@
+var/
+.env
+.venv/
+__pycache__/
+node_modules/
+dist/
+out/
+release/
+*.pyc
+.DS_Store
+backend/staticfiles/
+.pytest_cache/
+*.tsbuildinfo
