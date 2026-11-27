@@ -48,7 +48,8 @@ class AccountView(APIView):
             private=Count("id", filter=Q(status=Video.Status.READY, visibility="private")),
         )
         stats["categories"] = c.categories.count()
-        return ok(account=AccountSerializer(c).data, stats=stats, player_origin=settings.PLAYER_ORIGIN)
+        return ok(account=AccountSerializer(c).data, stats=stats, player_origin=settings.PLAYER_ORIGIN,
+                  api_origin=settings.DASHBOARD_ORIGIN)
 
     def patch(self, request):
         s = AccountSerializer(request.client, data=request.data, partial=True)

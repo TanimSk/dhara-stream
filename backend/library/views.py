@@ -210,7 +210,10 @@ class UploadCompleteView(UploadingMixin, APIView):
                 except ValueError as exc:
                     return fail(f"{r['height']}p playlist: {exc}")
                 playlists[str(r["height"])] = text
-                renditions.append({k: r[k] for k in ("height", "width", "bandwidth", "codecs")} | {"segments": len(segments)})
+                renditions.append({
+                    "height": r["height"], "width": r["width"], "pixel_height": r.get("pixel_height") or r["height"],
+                    "bandwidth": r["bandwidth"], "codecs": r["codecs"], "segments": len(segments),
+                })
                 checks.append(f"{video.id}/{r['height']}p/{segments[-1]}")
         else:
             checks.append(f"{video.id}/video.mp4")

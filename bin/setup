@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# One-time local setup: Python venv, npm installs, Postgres database, backend/.env, demo data.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+echo "→ backend venv"
+[ -d backend/.venv ] || python3 -m venv backend/.venv
+backend/.venv/bin/pip install -q -r backend/requirements-dev.txt
+
+if [ ! -f backend/.env ]; then
+  echo "→ backend/.env"
+  cp backend/.env.example backend/.env
+  fernet=$(backend/.venv/bin/python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+  sed -i.bak "s|^FERNET_KEY=.*|FERNET_KEY=$fernet|" backend/.env && rm backend/.env.bak
+  # Local uploads go to dev/fake_r2.py instead of Cloudflare.
+  echo "R2_ENDPOINT_OVERRIDE=http://127.0.0.1:9000" >> backend/.env
+fi
+
+echo "→ database"
+db=$(grep '^DB_NAME=' backend/.env | cut -d= -f2)
+createdb "${db:-dhara_stream}" 2>/dev/null || true
+backend/.venv/bin/python backend/manage.py migrate -v0
+backend/.venv/bin/python backend/manage.py dev_seed
+
+echo "→ web"
+(cd web && npm install --silent)
+if [ -d desktop ]; then echo "→ desktop"; (cd desktop && npm install --silent); fi
+echo "done. run bin/dev"

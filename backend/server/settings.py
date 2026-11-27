@@ -46,6 +46,7 @@ DESKTOP_ORIGIN = os.getenv("DESKTOP_ORIGIN", "app://dhara").rstrip("/")
 
 DASHBOARD_HOST = urlparse(DASHBOARD_ORIGIN).netloc.lower()
 PLAYER_HOST = urlparse(PLAYER_ORIGIN).netloc.lower()
+DESKTOP_HOST = urlparse(DESKTOP_ORIGIN).netloc.lower()
 
 # Encrypts R2 secrets, client API secrets and AES content keys at rest (Fernet, urlsafe base64, 32 bytes).
 FERNET_KEY = os.getenv("FERNET_KEY", "")

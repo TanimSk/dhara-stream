@@ -60,7 +60,7 @@ def validate_variant(text: str) -> tuple[str, list[str]]:
 def build_master(renditions: list[dict]) -> str:
     lines = ["#EXTM3U", "#EXT-X-VERSION:3", "#EXT-X-INDEPENDENT-SEGMENTS"]
     for r in sorted(renditions, key=lambda r: r["height"]):
-        attrs = f'BANDWIDTH={int(r["bandwidth"])},RESOLUTION={int(r["width"])}x{int(r["height"])}'
+        attrs = f'BANDWIDTH={int(r["bandwidth"])},RESOLUTION={int(r["width"])}x{int(r.get("pixel_height") or r["height"])}'
         if r.get("codecs"):
             attrs += f',CODECS="{r["codecs"]}"'
         lines += [f"#EXT-X-STREAM-INF:{attrs}", f'{int(r["height"])}.m3u8']

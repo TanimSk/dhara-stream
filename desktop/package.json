@@ -1,0 +1,31 @@
+{
+  "name": "dhara-desktop",
+  "productName": "dhara",
+  "version": "1.0.0",
+  "description": "dhara desktop: compress, encrypt and upload videos",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "dev": "DHARA_DEV_URL=http://localhost:5173 electron .",
+    "start": "node scripts/build-renderer.mjs && electron .",
+    "dist:mac": "node scripts/build-renderer.mjs && electron-builder --mac",
+    "dist:win": "node scripts/build-renderer.mjs && electron-builder --win"
+  },
+  "dependencies": {
+    "ffmpeg-static": "5.2.0",
+    "ffprobe-static": "3.1.0"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "app.dhara.desktop",
+    "productName": "dhara",
+    "files": ["src/**", "renderer/**", "config.json", "package.json"],
+    "asarUnpack": ["node_modules/ffmpeg-static/**", "node_modules/ffprobe-static/**"],
+    "mac": { "category": "public.app-category.video", "target": ["dmg"] },
+    "win": { "target": ["nsis"] },
+    "directories": { "output": "release" }
+  }
+}

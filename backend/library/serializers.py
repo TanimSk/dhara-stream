@@ -76,8 +76,11 @@ class UploadUrlsSerializer(serializers.Serializer):
 
 
 class RenditionSerializer(serializers.Serializer):
+    # Quality label (the short side: a 1080x1920 portrait video is "1080p").
     height = serializers.ChoiceField(choices=settings.ALLOWED_HEIGHTS)
+    # Real pixel size of this rendition.
     width = serializers.IntegerField(min_value=16, max_value=8192)
+    pixel_height = serializers.IntegerField(min_value=16, max_value=8192, required=False)
     bandwidth = serializers.IntegerField(min_value=1000, max_value=200_000_000)
     codecs = serializers.CharField(required=False, allow_blank=True, default="")
     playlist = serializers.CharField(trim_whitespace=False)

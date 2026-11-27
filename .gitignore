@@ -11,3 +11,6 @@ release/
 backend/staticfiles/
 .pytest_cache/
 *.tsbuildinfo
+web/public/ffmpeg/
+desktop/renderer/
+desktop/config.json

@@ -22,7 +22,7 @@ def session_from(resp):
 def test_embed_on_allowed_domain(ready_video):
     r = embed(ready_video)
     assert r.status_code == 200
-    assert "frame-ancestors 'self' https://dash.test https://acme.com" in r["Content-Security-Policy"]
+    assert "frame-ancestors 'self' https://dash.test app://dhara https://acme.com" in r["Content-Security-Policy"]
     assert "X-Frame-Options" not in r
     assert r["Referrer-Policy"] == "same-origin"
     assert "/static/hls.min.js" in r.content.decode()
@@ -108,6 +108,14 @@ def test_not_ready_video_is_not_found(ready_video):
     ready_video.status = Video.Status.UPLOADING
     ready_video.save()
     assert embed(ready_video).status_code == 404
+
+
+def test_portrait_master_uses_pixel_size(ready_video):
+    ready_video.renditions = [{"height": 720, "width": 720, "pixel_height": 1280, "bandwidth": 2000000, "codecs": "", "segments": 2}]
+    ready_video.save()
+    sess = session_from(embed(ready_video))
+    body = HttpClient().get(f"/v/{sess}/master.m3u8").content.decode()
+    assert "RESOLUTION=720x1280" in body and "CODECS" not in body
 
 
 def test_mp4_redirects_to_presigned_url(ready_video):

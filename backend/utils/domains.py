@@ -42,7 +42,8 @@ def requester_host(request) -> str | None:
 
 
 def trusted_hosts() -> set[str]:
-    return {settings.PLAYER_HOST, settings.DASHBOARD_HOST}
+    # The desktop app previews from its own origin (the main process stamps that Referer).
+    return {settings.PLAYER_HOST, settings.DASHBOARD_HOST, settings.DESKTOP_HOST}
 
 
 def embed_allowed(host: str | None, client) -> bool:
@@ -54,7 +55,7 @@ def embed_allowed(host: str | None, client) -> bool:
 
 
 def frame_ancestors(client) -> str:
-    sources = ["'self'", settings.DASHBOARD_ORIGIN]
+    sources = ["'self'", settings.DASHBOARD_ORIGIN, settings.DESKTOP_ORIGIN]
     for d in client.allowed_domains or []:
         sources += [f"https://{d}", f"http://{d}"]
     return " ".join(sources)
