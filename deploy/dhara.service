@@ -1,0 +1,22 @@
+# /etc/systemd/system/dhara.service
+[Unit]
+Description=dhara (gunicorn)
+After=network.target postgresql.service
+
+[Service]
+User=dhara
+Group=www-data
+WorkingDirectory=/srv/dhara/backend
+EnvironmentFile=/srv/dhara/backend/.env
+RuntimeDirectory=dhara
+# 3 sync workers ≈ 200 MB on a 1 vCPU / 2 GB box; requests are tiny and DB-bound.
+ExecStart=/srv/dhara/backend/.venv/bin/gunicorn server.wsgi:application \
+    --bind unix:/run/dhara/gunicorn.sock --workers 3 --timeout 60 \
+    --max-requests 2000 --max-requests-jitter 200 --access-logfile - --error-logfile -
+Restart=always
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Local stack: fake R2 :9000, Django (API + player) :8000, Vite dashboard :5173, test embed page :5500.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+mkdir -p var/log
+trap 'kill 0' EXIT
+
+backend/.venv/bin/python dev/fake_r2.py > var/log/fake_r2.log 2>&1 &
+backend/.venv/bin/python backend/manage.py runserver 127.0.0.1:8000 > var/log/django.log 2>&1 &
+(cd dev/embed-test && python3 -m http.server 5500 --bind 127.0.0.1) > var/log/embed-test.log 2>&1 &
+(cd web && npx vite --port 5173 --strictPort) &
+
+echo "dashboard http://localhost:5173 · player http://localhost:8000 · embed test http://localhost:5500"
+echo "logs in var/log/"
+wait
